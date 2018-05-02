@@ -1,0 +1,25 @@
+{
+	musicIn: zikIn
+	musicOut: zikOut
+	treeTemplate:
+		'''
+		{{.Genre}}
+		/
+		{{.AlbumArtist}}
+		/
+		{{.Title}}
+		/
+		{{.Track | printf "%02d"}}
+		-
+		{{.TrackTotal | printf "%02d"}}
+		/
+		{{.Year}}
+		**
+		{{.OriginalFilename}}
+		'''
+	unknown: {
+		genre: Unknown Genre
+		artist: Unknown Artist
+		album: Unknown Album
+	}
+}
