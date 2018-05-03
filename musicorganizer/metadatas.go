@@ -36,7 +36,7 @@ func (m *metadata) TrackTotal() (trackTotal int) {
 	return
 }
 
-func (m *metadata) DiscNumber() (discNumber int) {
+func (m *metadata) Disc() (discNumber int) {
 	discNumber, _ = m.Metadata.Disc()
 	return
 }
@@ -44,4 +44,8 @@ func (m *metadata) DiscNumber() (discNumber int) {
 func (m *metadata) DiscTotal() (discTotal int) {
 	_, discTotal = m.Metadata.Disc()
 	return
+}
+
+func (m *metadata) Ext() string {
+	return path.Ext(m.OriginalFilename)
 }

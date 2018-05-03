@@ -9,24 +9,18 @@ import (
 
 type configuration struct {
 	MusicIn, MusicOut string
+	Preview           bool
 	TreeTemplate      string
-	Unknown           unknownTagStrings
-}
-
-type unknownTagStrings struct {
-	Genre, Artist, Album string
 }
 
 var config configuration
 
 func init() {
 	config = configuration{
+		MusicIn:      ".",
+		MusicOut:     "./organizedMusicLibrary",
+		Preview:      true,
 		TreeTemplate: "{{.Genre}}/{{.AlbumArtist}}/{{.Title}}",
-		Unknown: unknownTagStrings{
-			Genre:  "Unknown genre",
-			Artist: "Unknown artist",
-			Album:  "Unknown album",
-		},
 	}
 }
 

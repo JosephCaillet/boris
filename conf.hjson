@@ -1,25 +1,40 @@
 {
 	musicIn: zikIn
 	musicOut: zikOut
+	preview: false
 	treeTemplate:
 		'''
-		{{.Genre}}
 		/
-		{{.AlbumArtist}}
+		{{if .Genre}}
+			{{.Genre}}
+		{{else}}
+			Unknonw genre
+		{{end}}
 		/
-		{{.Title}}
+		{{if .AlbumArtist}}
+			{{.AlbumArtist}}
+		{{else if .Artist}}
+			{{.Artist}}
+		{{else}}
+			Unknonw artist
+		{{end}}
 		/
-		{{.Track | printf "%02d"}}
-		-
-		{{.TrackTotal | printf "%02d"}}
+		{{if .Album}}
+			{{.Album}}
+		{{else}}
+			Unknonw album
+		{{end}}
 		/
-		{{.Year}}
-		**
-		{{.OriginalFilename}}
+		{{if gt .DiscTotal 1}}
+			{{.DiscTotal | printf "%02d"}}_
+		{{end}}
+		{{if .Track}}
+			{{.Track | printf "%02d"}} - {{""}}
+		{{end}}
+		{{if .Title}}
+			{{.Title}}{{.Ext}}
+		{{else}}
+			{{.OriginalFilename}}
+		{{end}}
 		'''
-	unknown: {
-		genre: Unknown Genre
-		artist: Unknown Artist
-		album: Unknown Album
-	}
 }
