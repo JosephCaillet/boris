@@ -1,8 +1,18 @@
 package main
 
-import "github.com/JosephCaillet/boris/musicorganizer"
+import (
+	"fmt"
+
+	"github.com/JosephCaillet/boris/musicorganizer"
+)
 
 func main() {
-	musicorganizer.LoadConfiguration("conf.hjson")
-	musicorganizer.Reorganize()
+	if err := musicorganizer.LoadConfiguration("conf.hjson"); err != nil {
+		fmt.Printf("❌ failure loading configuration: %v", err)
+		return
+	}
+
+	if err := musicorganizer.Reorganize(); err != nil {
+		fmt.Printf("❌ failure reorganizing files: %v", err)
+	}
 }

@@ -1,10 +1,9 @@
 {
 	musicIn: zikIn
 	musicOut: zikOut
-	preview: false
+	preview: true
 	treeTemplate:
 		'''
-		/
 		{{if .Genre}}
 			{{.Genre}}
 		{{else}}
@@ -29,7 +28,7 @@
 			{{.DiscTotal | printf "%02d"}}_
 		{{end}}
 		{{if .Track}}
-			{{.Track | printf "%02d"}} - {{""}}
+			{{.Track | printf "%02d"}} {{""}}
 		{{end}}
 		{{if .Title}}
 			{{.Title}}{{.Ext}}
