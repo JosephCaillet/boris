@@ -32,3 +32,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/dhowden/tag"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/cleversoap/go-cp"

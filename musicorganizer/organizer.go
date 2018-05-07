@@ -9,6 +9,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/cleversoap/go-cp"
 	"github.com/dhowden/tag"
 )
 
@@ -39,7 +40,11 @@ func Reorganize() error {
 	if config.Preview {
 		fmt.Println("⏺ Preview mode ⏺")
 	} else {
-		fmt.Println("⏺ No preview ⏺")
+		if config.Move {
+			fmt.Println("⏺ Move mode ⏺")
+		} else {
+			fmt.Println("⏺ Copy mode ⏺")
+		}
 	}
 
 	exploredPathes := make([]filePathInfos, 0)
@@ -63,6 +68,13 @@ func Reorganize() error {
 	err = reorganizeFile(&exploredPathes, &lastExploredDir, &lastDestinationDir)
 	if err != nil {
 		fmt.Printf("❌ error reorganizing file: %v\n", err)
+	}
+
+	if !config.Preview && config.DeleteMusicIn {
+		if err = os.RemoveAll(config.MusicIn); err != nil {
+			return fmt.Errorf("delete input music directory: %v", err)
+		}
+
 	}
 
 	return nil
@@ -120,7 +132,20 @@ func reorganizeFile(exploredPathes *[]filePathInfos, lastExploredDir, lastDestin
 
 		fmt.Printf("%s\t%s\t➜\t%s\n", progressPrefix, path.Base(filePathInfo.fullPath), newPath)
 
-		// os.Rename(oldpath string, newpath string)
+		if !config.Preview {
+			if err = os.MkdirAll(*lastDestinationDir, 0777); err != nil {
+				return fmt.Errorf("creating folder: %v", err)
+			}
+			if config.Move {
+				if err = os.Rename(filePathInfo.fullPath, newPath); err != nil {
+					return fmt.Errorf("moving file: %v", err)
+				}
+			} else {
+				if err = cp.Copy(filePathInfo.fullPath, newPath); err != nil {
+					return fmt.Errorf("copy file: %v", err)
+				}
+			}
+		}
 	}
 
 	return nil

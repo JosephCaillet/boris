@@ -3,6 +3,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/cleversoap/go-cp"
+  packages = ["."]
+  revision = "c1540332ed3e3f5122faafcac57a6d6dedbeaacd"
+
+[[projects]]
+  branch = "master"
   name = "github.com/dhowden/tag"
   packages = ["."]
   revision = "e80a3fa76a9645b4a90127deab5b271d8c5bcf85"
@@ -16,6 +22,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7aa7705313046d257d4d97d7da63641cf8c253eb0056ccaa7c4005d83bdecd18"
+  inputs-digest = "892d84af687fa8924f3560036d449d3804371c4230575215c427e4ed9dee99f8"
   solver-name = "gps-cdcl"
   solver-version = 1
