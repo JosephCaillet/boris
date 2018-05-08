@@ -67,7 +67,7 @@ func Reorganize() error {
 
 	err = reorganizeFile(&exploredPathes, &lastExploredDir, &lastDestinationDir)
 	if err != nil {
-		fmt.Printf("❌ error reorganizing file: %v\n", err)
+		return fmt.Errorf("error reorganizing file: %v", err)
 	}
 
 	if !config.Preview && config.DeleteMusicIn {

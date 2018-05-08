@@ -2,27 +2,93 @@ package musicorganizer
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/hjson/hjson-go"
 )
 
-type configuration struct {
+type Configuration struct {
 	MusicIn, MusicOut            string
 	Preview, Move, DeleteMusicIn bool
-	TreeTemplate                 string
+	TreeTemplate, Replacement    string
 }
 
-var config configuration
+var config Configuration
 
 func init() {
-	config = configuration{
+	config = Configuration{
 		MusicIn:       ".",
-		MusicOut:      "./organizedMusicLibrary",
+		MusicOut:      "organizedMusicLibrary",
 		Preview:       false,
 		Move:          false,
 		DeleteMusicIn: false,
+		Replacement:   "_",
 		TreeTemplate: `
+		{{if .Genre}}
+			{{.Genre}}
+		{{else}}
+			Unknonw genre
+		{{end}}
+		/
+		{{if .AlbumArtist}}
+			{{.AlbumArtist}}
+		{{else if .Artist}}
+			{{.Artist}}
+		{{else}}
+			Unknonw artist
+		{{end}}
+		/
+		{{if .Album}}
+			{{.Album}}
+		{{else}}
+			Unknonw album
+		{{end}}
+		/
+		{{if gt .DiscTotal 1}}
+			{{.DiscTotal | printf "%02d"}}_
+		{{end}}
+		{{if .Track}}
+			{{.Track | printf "%02d"}} {{/*comment keeps trailling space*/}}
+		{{end}}
+		{{if .Title}}
+			{{.Title}}{{.Ext}}
+		{{else}}
+			{{.OriginalFilename}}
+		{{end}}
+		`,
+	}
+}
+
+func LoadConfigurationFromFile(path string) error {
+	configString, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	var data map[string]interface{}
+	hjson.Unmarshal(configString, &data)
+
+	b, _ := json.Marshal(data)
+	json.Unmarshal(b, &config)
+
+	return nil
+}
+
+func GetConfig() *Configuration {
+	return &config
+}
+
+func PrintDefaultConfiguration() {
+	fmt.Println(`{
+	musicIn: .
+	musicOut: organizedMusicLibrary
+	preview: false
+	move: false
+	deleteMusicIn: false
+	replacement: "_"
+	treeTemplate:
+		'''
 		{{if .Genre}}
 			{{.Genre}}
 		{{else}}
@@ -54,21 +120,6 @@ func init() {
 		{{else}}
 			{{.OriginalFilename}}
 		{{end}}
-		`,
-	}
-}
-
-func LoadConfiguration(path string) error {
-	configString, err := ioutil.ReadFile(path)
-	if err != nil {
-		return err
-	}
-
-	var data map[string]interface{}
-	hjson.Unmarshal(configString, &data)
-
-	b, _ := json.Marshal(data)
-	json.Unmarshal(b, &config)
-
-	return nil
+		'''
+}`)
 }

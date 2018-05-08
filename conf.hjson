@@ -1,9 +1,10 @@
 {
 	musicIn: zikIn
 	musicOut: zikOut
-	preview: false
+	preview: true
 	move: false
 	deleteMusicIn: false
+	replacement: "_"
 	treeTemplate:
 		'''
 		{{if .Genre}}

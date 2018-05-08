@@ -2,10 +2,21 @@ package musicorganizer
 
 import (
 	"path"
+	"regexp"
 	"strconv"
 
 	"github.com/dhowden/tag"
 )
+
+var regex *regexp.Regexp
+
+func sanitize(str string) string {
+	return regex.ReplaceAllString(str, config.Replacement)
+}
+
+func init() {
+	regex = regexp.MustCompile(`[<>:"\/\\|?*]`)
+}
 
 type metadata struct {
 	tag.Metadata
@@ -17,13 +28,6 @@ func newMetadata(tagMetadata tag.Metadata, originalFilename string) *metadata {
 		Metadata:         tagMetadata,
 		OriginalFilename: path.Base(originalFilename),
 	}
-}
-
-func (m *metadata) Year() string {
-	if m.Metadata.FileType() == tag.FLAC {
-		return m.Metadata.Raw()["date"].(string)
-	}
-	return strconv.Itoa(m.Metadata.Year())
 }
 
 func (m *metadata) Track() (trackNumber int) {
@@ -48,4 +52,35 @@ func (m *metadata) DiscTotal() (discTotal int) {
 
 func (m *metadata) Ext() string {
 	return path.Ext(m.OriginalFilename)
+}
+
+func (m *metadata) Year() string {
+	if m.Metadata.FileType() == tag.FLAC {
+		return sanitize(m.Metadata.Raw()["date"].(string))
+	}
+	return strconv.Itoa(m.Metadata.Year())
+}
+
+func (m *metadata) Title() string {
+	return sanitize(m.Metadata.Title())
+}
+
+func (m *metadata) Album() string {
+	return sanitize(m.Metadata.Album())
+}
+
+func (m *metadata) Artist() string {
+	return sanitize(m.Metadata.Artist())
+}
+
+func (m *metadata) AlbumArtist() string {
+	return sanitize(m.Metadata.AlbumArtist())
+}
+
+func (m *metadata) Composer() string {
+	return sanitize(m.Metadata.Composer())
+}
+
+func (m *metadata) Genre() string {
+	return sanitize(m.Metadata.Genre())
 }
