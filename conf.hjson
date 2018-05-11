@@ -28,7 +28,7 @@
 		{{end}}
 		/
 		{{if gt .DiscTotal 1}}
-			{{.DiscTotal | printf "%02d"}}_
+			{{.Disc | printf "%02d"}}_
 		{{end}}
 		{{if .Track}}
 			{{.Track | printf "%02d"}} {{""}}

@@ -38,16 +38,17 @@ func Reorganize() error {
 	}
 
 	if config.Preview {
-		fmt.Println("⏺ Preview mode ⏺")
+		fmt.Println("⏺  Preview mode ⏺")
 	} else {
 		if config.Move {
-			fmt.Println("⏺ Move mode ⏺")
+			fmt.Println("⏺  Move mode ⏺")
 		} else {
-			fmt.Println("⏺ Copy mode ⏺")
+			fmt.Println("⏺  Copy mode ⏺")
 		}
 	}
 
 	exploredPathes := make([]filePathInfos, 0)
+	fmt.Print("\n🔎  Listing files...\n\n")
 
 	err = filepath.Walk(config.MusicIn, func(filePath string, info os.FileInfo, err error) error {
 		if err != nil {
