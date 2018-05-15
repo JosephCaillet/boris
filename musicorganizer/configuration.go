@@ -46,7 +46,7 @@ func init() {
 		{{end}}
 		/
 		{{if gt .DiscTotal 1}}
-			{{.Disc | printf "%02d"}}_
+			{{.Disc | printf "%02d"}}-
 		{{end}}
 		{{if .Track}}
 			{{.Track | printf "%02d"}} {{/*comment keeps trailling space*/}}
@@ -110,7 +110,7 @@ func PrintDefaultConfiguration() {
 		{{end}}
 		/
 		{{if gt .DiscTotal 1}}
-			{{.Disc | printf "%02d"}}_
+			{{.Disc | printf "%02d"}}-
 		{{end}}
 		{{if .Track}}
 			{{.Track | printf "%02d"}} {{""}}

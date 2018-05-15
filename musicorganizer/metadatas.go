@@ -15,7 +15,7 @@ func sanitize(str string) string {
 }
 
 func init() {
-	regex = regexp.MustCompile(`[<>:"\/\\|?*]`)
+	regex = regexp.MustCompile(`[<>:"\/\\|?*]|[\.\ ]+$`)
 }
 
 type metadata struct {
