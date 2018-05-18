@@ -30,7 +30,6 @@ type filePathInfos struct {
 var tmpl *template.Template
 
 func Reorganize() error {
-	var lastExploredDir, lastDestinationDir string
 	var err error
 	tmpl, err = template.New("TreeTemplate").Parse(config.TreeTemplate)
 	if err != nil {
@@ -55,10 +54,6 @@ func Reorganize() error {
 			return fmt.Errorf("accessing a path %q: %v", filePath, err)
 		}
 
-		if info.IsDir() {
-			return nil
-		}
-
 		exploredPathes = append(exploredPathes, filePathInfos{fullPath: filePath, FileInfo: info})
 		return nil
 	})
@@ -66,7 +61,7 @@ func Reorganize() error {
 		fmt.Printf("❌ error walking the path %q: %v\n", config.MusicIn, err)
 	}
 
-	err = reorganizeFile(&exploredPathes, &lastExploredDir, &lastDestinationDir)
+	err = reorganizeFiles(&exploredPathes)
 	if err != nil {
 		return fmt.Errorf("error reorganizing file: %v", err)
 	}
@@ -104,9 +99,11 @@ func computeNewFilePath(filePath string) (string, error) {
 	return config.MusicOut + "/" + newPath, nil
 }
 
-func reorganizeFile(exploredPathes *[]filePathInfos, lastExploredDir, lastDestinationDir *string) error {
+func reorganizeFiles(exploredPathes *[]filePathInfos) error {
 	start := time.Now()
 	pathesNb := len(*exploredPathes)
+	nonMusicFile := make([]string, 0)
+	var lastDestinationDir string
 
 	for i, filePathInfo := range *exploredPathes {
 		progressPrefix := fmt.Sprintf("[ %d%% ][ %s ]\t",
@@ -114,38 +111,47 @@ func reorganizeFile(exploredPathes *[]filePathInfos, lastExploredDir, lastDestin
 			time.Since(start).Round(time.Second),
 		)
 
-		currentDir := path.Dir(filePathInfo.fullPath)
-		if currentDir != *lastExploredDir {
-			fmt.Printf("%s\n%s↳ %s/\n", progressPrefix, progressPrefix, currentDir)
+		if filePathInfo.FileInfo.IsDir() {
+			fmt.Printf("%s\n%s↳ %s/\n", progressPrefix, progressPrefix, filePathInfo.fullPath)
+			continue
 		}
-		*lastExploredDir = currentDir
 
 		newPath, err := computeNewFilePath(filePathInfo.fullPath)
 		if _, ok := err.(readTagsError); ok {
 			fmt.Printf("%s\t❌ error: %v\n", progressPrefix, err)
-			newPath = *lastDestinationDir + "/" + path.Base(filePathInfo.fullPath)
-			// fmt.Printf("%s\t%s\t➜\t%s\n", progressPrefix, path.Base(filePathInfo.fullPath), newPath)
-			// continue
+			newPath = lastDestinationDir + "/" + path.Base(filePathInfo.fullPath)
+			nonMusicFile = append(nonMusicFile, filePathInfo.fullPath)
 		} else if err != nil {
 			return fmt.Errorf("computing new path: %v", err)
+		} else {
+			lastDestinationDir = path.Dir(newPath)
+
+			fmt.Printf("%s\t♫ %s\t➜\t%s\n", progressPrefix, path.Base(filePathInfo.fullPath), newPath)
+
+			if !config.Preview {
+				if err = os.MkdirAll(lastDestinationDir, 0777); err != nil {
+					return fmt.Errorf("creating folder: %v", err)
+				}
+				if config.Move {
+					if err = os.Rename(filePathInfo.fullPath, newPath); err != nil {
+						return fmt.Errorf("moving file: %v", err)
+					}
+				} else {
+					if err = cp.Copy(filePathInfo.fullPath, newPath); err != nil {
+						return fmt.Errorf("copy file: %v", err)
+					}
+				}
+			}
 		}
-		*lastDestinationDir = path.Dir(newPath)
 
-		fmt.Printf("%s\t%s\t➜\t%s\n", progressPrefix, path.Base(filePathInfo.fullPath), newPath)
-
-		if !config.Preview {
-			if err = os.MkdirAll(*lastDestinationDir, 0777); err != nil {
-				return fmt.Errorf("creating folder: %v", err)
+		if len(nonMusicFile) != 0 &&
+			(i+1 < len(*exploredPathes) && (*exploredPathes)[i+1].FileInfo.IsDir()) ||
+			i+1 == len(*exploredPathes) {
+			for _, srcPath := range nonMusicFile {
+				newPath = lastDestinationDir + "/" + path.Base(srcPath)
+				fmt.Printf("%s\t🖺 %s\t➜\t%s\n", progressPrefix, path.Base(srcPath), newPath)
 			}
-			if config.Move {
-				if err = os.Rename(filePathInfo.fullPath, newPath); err != nil {
-					return fmt.Errorf("moving file: %v", err)
-				}
-			} else {
-				if err = cp.Copy(filePathInfo.fullPath, newPath); err != nil {
-					return fmt.Errorf("copy file: %v", err)
-				}
-			}
+			nonMusicFile = nil
 		}
 	}
 
