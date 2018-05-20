@@ -90,6 +90,7 @@ func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 	pathesNb := len(*exploredPathes)
 	nonMusicFile := make([]string, 0)
 	lastDestinationDir := config.MusicOut
+	musicFoundInDir := false
 
 	for i, filePathInfo := range *exploredPathes {
 		progressPrefix := fmt.Sprintf("[ %d%% ][ %s ]\t",
@@ -98,6 +99,7 @@ func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 		)
 
 		if filePathInfo.FileInfo.IsDir() {
+			musicFoundInDir = false
 			fmt.Printf("%s\n%s↳ %s/\n", progressPrefix, progressPrefix, filePathInfo.FullPath)
 			continue
 		}
@@ -110,6 +112,7 @@ func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 		} else if err != nil {
 			return fmt.Errorf("computing new path: %v", err)
 		} else {
+			musicFoundInDir = true
 			lastDestinationDir = path.Dir(newPath)
 
 			fmt.Printf("%s\t♫ %s\t➜\t%s\n", progressPrefix, path.Base(filePathInfo.FullPath), newPath)
@@ -127,6 +130,9 @@ func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 		if len(nonMusicFile) != 0 &&
 			(i+1 < len(*exploredPathes) && (*exploredPathes)[i+1].FileInfo.IsDir()) ||
 			i+1 == len(*exploredPathes) {
+			if !musicFoundInDir {
+				fmt.Printf("%s\t⚠ No tagged music file found, moving file(s) below to last computed location.\n", progressPrefix)
+			}
 			for _, srcPath := range nonMusicFile {
 				newPath = lastDestinationDir + "/" + path.Base(srcPath)
 				fmt.Printf("%s\t🖺 %s\t➜\t%s\n", progressPrefix, path.Base(srcPath), newPath)
