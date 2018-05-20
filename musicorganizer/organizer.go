@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 	"text/template"
 	"time"
 
+	"github.com/JosephCaillet/boris/fs"
 	"github.com/cleversoap/go-cp"
 	"github.com/dhowden/tag"
 )
@@ -20,11 +20,6 @@ type readTagsError struct {
 
 func (e readTagsError) Error() string {
 	return fmt.Sprintf("opening tags of file %q: %v", e.filepath, e.error)
-}
-
-type filePathInfos struct {
-	fullPath string
-	os.FileInfo
 }
 
 var tmpl *template.Template
@@ -46,19 +41,10 @@ func Reorganize() error {
 		}
 	}
 
-	exploredPathes := make([]filePathInfos, 0)
 	fmt.Print("\n🔎  Listing files...\n\n")
-
-	err = filepath.Walk(config.MusicIn, func(filePath string, info os.FileInfo, err error) error {
-		if err != nil {
-			return fmt.Errorf("accessing a path %q: %v", filePath, err)
-		}
-
-		exploredPathes = append(exploredPathes, filePathInfos{fullPath: filePath, FileInfo: info})
-		return nil
-	})
+	exploredPathes, err := fs.Tree(config.MusicIn)
 	if err != nil {
-		fmt.Printf("❌ error walking the path %q: %v\n", config.MusicIn, err)
+		return err
 	}
 
 	err = reorganizeFiles(&exploredPathes)
@@ -99,11 +85,11 @@ func computeNewFilePath(filePath string) (string, error) {
 	return config.MusicOut + "/" + newPath, nil
 }
 
-func reorganizeFiles(exploredPathes *[]filePathInfos) error {
+func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 	start := time.Now()
 	pathesNb := len(*exploredPathes)
 	nonMusicFile := make([]string, 0)
-	var lastDestinationDir string
+	lastDestinationDir := config.MusicOut
 
 	for i, filePathInfo := range *exploredPathes {
 		progressPrefix := fmt.Sprintf("[ %d%% ][ %s ]\t",
@@ -112,34 +98,28 @@ func reorganizeFiles(exploredPathes *[]filePathInfos) error {
 		)
 
 		if filePathInfo.FileInfo.IsDir() {
-			fmt.Printf("%s\n%s↳ %s/\n", progressPrefix, progressPrefix, filePathInfo.fullPath)
+			fmt.Printf("%s\n%s↳ %s/\n", progressPrefix, progressPrefix, filePathInfo.FullPath)
 			continue
 		}
 
-		newPath, err := computeNewFilePath(filePathInfo.fullPath)
+		newPath, err := computeNewFilePath(filePathInfo.FullPath)
 		if _, ok := err.(readTagsError); ok {
 			fmt.Printf("%s\t❌ error: %v\n", progressPrefix, err)
-			newPath = lastDestinationDir + "/" + path.Base(filePathInfo.fullPath)
-			nonMusicFile = append(nonMusicFile, filePathInfo.fullPath)
+			newPath = lastDestinationDir + "/" + path.Base(filePathInfo.FullPath)
+			nonMusicFile = append(nonMusicFile, filePathInfo.FullPath)
 		} else if err != nil {
 			return fmt.Errorf("computing new path: %v", err)
 		} else {
 			lastDestinationDir = path.Dir(newPath)
 
-			fmt.Printf("%s\t♫ %s\t➜\t%s\n", progressPrefix, path.Base(filePathInfo.fullPath), newPath)
+			fmt.Printf("%s\t♫ %s\t➜\t%s\n", progressPrefix, path.Base(filePathInfo.FullPath), newPath)
 
 			if !config.Preview {
 				if err = os.MkdirAll(lastDestinationDir, 0777); err != nil {
 					return fmt.Errorf("creating folder: %v", err)
 				}
-				if config.Move {
-					if err = os.Rename(filePathInfo.fullPath, newPath); err != nil {
-						return fmt.Errorf("moving file: %v", err)
-					}
-				} else {
-					if err = cp.Copy(filePathInfo.fullPath, newPath); err != nil {
-						return fmt.Errorf("copy file: %v", err)
-					}
+				if err = reorganizeFile(filePathInfo.FullPath, newPath); err != nil {
+					return err
 				}
 			}
 		}
@@ -150,10 +130,28 @@ func reorganizeFiles(exploredPathes *[]filePathInfos) error {
 			for _, srcPath := range nonMusicFile {
 				newPath = lastDestinationDir + "/" + path.Base(srcPath)
 				fmt.Printf("%s\t🖺 %s\t➜\t%s\n", progressPrefix, path.Base(srcPath), newPath)
+				if !config.Preview {
+					if err = reorganizeFile(srcPath, newPath); err != nil {
+						return err
+					}
+				}
 			}
 			nonMusicFile = nil
 		}
 	}
 
+	return nil
+}
+
+func reorganizeFile(oldPath, newPath string) error {
+	if config.Move {
+		if err := os.Rename(oldPath, newPath); err != nil {
+			return fmt.Errorf("moving file: %v", err)
+		}
+	} else {
+		if err := cp.Copy(oldPath, newPath); err != nil {
+			return fmt.Errorf("copy file: %v", err)
+		}
+	}
 	return nil
 }
