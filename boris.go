@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/JosephCaillet/boris/log"
 	"github.com/JosephCaillet/boris/musicorganizer"
 )
 
@@ -36,14 +37,14 @@ func main() {
 
 	if configFile != "" {
 		if err := musicorganizer.LoadConfigurationFromFile("conf.hjson"); err != nil {
-			fmt.Printf("❌ failure loading configuration: %v", err)
+			log.Error("failure loading configuration", err)
 			return
 		}
 		flag.Parse() //needed ot overide config file by command line
 	}
 
 	if err := musicorganizer.Reorganize(); err != nil {
-		fmt.Printf("❌ failure reorganizing files: %v", err)
+		log.Error("failure reorganizing files", err)
 	}
 }
 

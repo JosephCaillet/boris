@@ -46,7 +46,6 @@ func tree(rootPath string) ([]FilePathInfos, error) {
 	})
 
 	for _, file := range files {
-		// fmt.Printf("%v\t%s\n", file.IsDir(), file.Name())
 		filePathInfo = append(filePathInfo, FilePathInfos{FullPath: rootPath + "/" + file.Name(), FileInfo: file})
 		if !file.IsDir() {
 			continue
