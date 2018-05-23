@@ -4,11 +4,25 @@ import (
 	"path"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/dhowden/tag"
 )
 
-var regex *regexp.Regexp
+var (
+	regex              *regexp.Regexp
+	supportedExtension = []tag.FileType{tag.MP3, tag.M4A, tag.M4B, tag.M4P, tag.ALAC, tag.FLAC, tag.OGG}
+)
+
+func IsFileOpenable(filePath string) bool {
+	fileExt := strings.ToLower(path.Ext(filePath))
+	for _, ext := range supportedExtension {
+		if fileExt == "."+strings.ToLower(string(ext)) {
+			return true
+		}
+	}
+	return false
+}
 
 func sanitize(str string) string {
 	return regex.ReplaceAllString(str, config.Replacement)

@@ -102,8 +102,9 @@ func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 
 		newPath, err := computeNewFilePath(filePathInfo.FullPath)
 		if _, ok := err.(readTagsError); ok {
-			log.ErrorTag(err)
-			newPath = lastDestinationDir + "/" + path.Base(filePathInfo.FullPath)
+			if IsFileOpenable(filePathInfo.FullPath) {
+				log.ErrorTag(err)
+			}
 			nonMusicFile = append(nonMusicFile, filePathInfo.FullPath)
 		} else if err != nil {
 			return fmt.Errorf("computing new path: %v", err)

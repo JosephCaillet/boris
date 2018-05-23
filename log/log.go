@@ -3,11 +3,15 @@ package log
 import (
 	"fmt"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 var (
 	startTime             time.Time
 	progress, progressMax int
+	errorColor            = color.New(color.BgRed, color.FgBlack)
+	warnColor             = color.New(color.BgYellow, color.FgBlack)
 )
 
 func Mode(mode string) {
@@ -29,6 +33,7 @@ func ProgressOperation() {
 }
 
 func getPrefix() string {
+	color.Unset()
 	return fmt.Sprintf("[ %d%% ][ %s ]",
 		int(float32(progress)/float32(progressMax)*100.0),
 		time.Since(startTime).Round(time.Second),
@@ -47,11 +52,11 @@ func MoveFile(oldPath, newPath string, musicFile bool) {
 }
 
 func ErrorTag(err error) {
-	p := getPrefix()
+	p := errorColor.Sprint(getPrefix())
 	fmt.Printf("%s\t\t❌ error: %v\n", p, err)
 }
 
 func WarnWrongMove() {
-	p := getPrefix()
+	p := warnColor.Sprint(getPrefix())
 	fmt.Printf("%s\t\t⚠ No tagged music file found, moving file(s) below to last computed location.\n", p)
 }
