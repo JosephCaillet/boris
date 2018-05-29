@@ -82,7 +82,7 @@ func computeNewFilePath(filePath string) (string, error) {
 
 	newPath := strings.Replace(pathBuilder.String(), "\n", "", -1)
 	newPath = strings.Replace(newPath, "\t", "", -1)
-	return config.MusicOut + "/" + newPath, nil
+	return path.Clean(config.MusicOut + "/" + newPath), nil
 }
 
 func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
