@@ -37,7 +37,7 @@ func main() {
 	}
 
 	if configFile != "" {
-		if err := musicorganizer.LoadConfigurationFromFile("conf.hjson"); err != nil {
+		if err := musicorganizer.LoadConfigurationFromFile(configFile); err != nil {
 			log.Error("failure loading configuration", err)
 			return
 		}
