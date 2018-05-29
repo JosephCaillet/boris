@@ -1,6 +1,7 @@
 {
 	musicIn: zikIn
 	musicOut: zikOut
+	unorganizedFiles: unorganizedFiles,
 	preview: true
 	move: false
 	deleteMusicIn: false

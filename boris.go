@@ -20,6 +20,7 @@ func main() {
 
 	flag.StringVar(&conf.MusicIn, "i", conf.MusicIn, "input music directory")
 	flag.StringVar(&conf.MusicOut, "o", conf.MusicOut, "output music directory")
+	flag.StringVar(&conf.UnorganizedFiles, "u", conf.UnorganizedFiles, "unorganized files directory")
 
 	flag.BoolVar(&conf.Preview, "p", false, "preview change")
 	flag.BoolVar(&conf.Move, "m", false, "move file instead of copying them")
@@ -53,6 +54,11 @@ func borisUsage() {
 	fmt.Println("\nOptions:")
 	flag.PrintDefaults()
 	fmt.Print(`
+About boris:
+  Boris is a tool to reorganize automatically your music library, using tags defined in your music files and templating.
+  Boris is made by Joseph Caillet and is released under GPL-3.0.
+  View source code, report bug, contribute here: https://github.com/JosephCaillet/boris.
+
 About templating:
   - Template are defined using golang template syntax (https://golang.org/pkg/text/template/)
   - Every newline and tabulation will be removed
@@ -70,11 +76,5 @@ About templating:
   	* TrackTotal
   	* Ext (file extension)
   	* OriginalFilename (with extension)
-
-About boris:
-  Boris is a tool to reorganize automatically your music library, using tags defined in your music files and templating.
-  Boris is made by Joseph Caillet and is released under GPL-3.0
-  View source code, report bug, contribute here: https://github.com/JosephCaillet/boris
-
 `)
 }

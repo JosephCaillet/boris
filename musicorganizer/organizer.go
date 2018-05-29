@@ -7,9 +7,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/JosephCaillet/boris/log"
-
 	"github.com/JosephCaillet/boris/fs"
+	"github.com/JosephCaillet/boris/log"
 	"github.com/cleversoap/go-cp"
 	"github.com/dhowden/tag"
 )
@@ -131,7 +130,11 @@ func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 				log.WarnWrongMove()
 			}
 			for _, srcPath := range nonMusicFile {
-				newPath = lastDestinationDir + "/" + path.Base(srcPath)
+				if musicFoundInDir {
+					newPath = lastDestinationDir + "/" + path.Base(srcPath)
+				} else {
+					newPath = config.UnorganizedFiles + "/" + strings.Join(strings.Split(srcPath, "/")[1:], "/")
+				}
 				log.MoveFile(path.Base(srcPath), newPath, false)
 				if !config.Preview {
 					if err = reorganizeFile(srcPath, newPath); err != nil {

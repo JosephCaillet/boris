@@ -10,6 +10,7 @@ import (
 
 type Configuration struct {
 	MusicIn, MusicOut            string
+	UnorganizedFiles             string
 	Preview, Move, DeleteMusicIn bool
 	TreeTemplate, Replacement    string
 }
@@ -18,12 +19,13 @@ var config Configuration
 
 func init() {
 	config = Configuration{
-		MusicIn:       ".",
-		MusicOut:      "organizedMusicLibrary",
-		Preview:       false,
-		Move:          false,
-		DeleteMusicIn: false,
-		Replacement:   "_",
+		MusicIn:          ".",
+		MusicOut:         "organizedMusicLibrary",
+		UnorganizedFiles: "unorganizedFiles",
+		Preview:          false,
+		Move:             false,
+		DeleteMusicIn:    false,
+		Replacement:      "_",
 		TreeTemplate: `
 		{{if .Genre}}
 			{{.Genre}}
@@ -83,6 +85,7 @@ func PrintDefaultConfiguration() {
 	fmt.Println(`{
 	musicIn: .
 	musicOut: organizedMusicLibrary
+	unorganizedFiles: unorganizedFiles,
 	preview: false
 	move: false
 	deleteMusicIn: false
