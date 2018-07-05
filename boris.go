@@ -20,7 +20,7 @@ func main() {
 
 	flag.StringVar(&conf.MusicIn, "i", conf.MusicIn, "input music directory")
 	flag.StringVar(&conf.MusicOut, "o", conf.MusicOut, "output music directory")
-	flag.StringVar(&conf.UnorganizedFiles, "u", conf.UnorganizedFiles, "unorganized files directory")
+	flag.StringVar(&conf.UnorganizedFiles, "u", conf.UnorganizedFiles, "unorganized files directory where folders will be moved if their contains files that does not have any tags")
 
 	flag.BoolVar(&conf.Preview, "p", false, "preview change")
 	flag.BoolVar(&conf.Move, "m", false, "move file instead of copying them")
