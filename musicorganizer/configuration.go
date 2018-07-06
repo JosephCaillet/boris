@@ -51,7 +51,7 @@ func init() {
 			{{.Disc | printf "%02d"}}-
 		{{end}}
 		{{if .Track}}
-			{{.Track | printf "%02d"}} {{/*comment keeps trailling space*/}}
+			{{.Track | printf "%02d"}} {{/**/}}
 		{{end}}
 		{{if .Title}}
 			{{.Title}}{{.Ext}}
@@ -116,7 +116,7 @@ func PrintDefaultConfiguration() {
 			{{.Disc | printf "%02d"}}-
 		{{end}}
 		{{if .Track}}
-			{{.Track | printf "%02d"}} {{""}}
+			{{.Track | printf "%02d"}} {{/**/}}
 		{{end}}
 		{{if .Title}}
 			{{.Title}}{{.Ext}}

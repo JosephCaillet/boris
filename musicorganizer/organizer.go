@@ -114,9 +114,6 @@ func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 			log.MoveFile(path.Base(filePathInfo.FullPath), newPath, true)
 
 			if !config.Preview {
-				if err = os.MkdirAll(lastDestinationDir, 0777); err != nil {
-					return fmt.Errorf("creating folder: %v", err)
-				}
 				if err = reorganizeFile(filePathInfo.FullPath, newPath); err != nil {
 					return err
 				}
@@ -150,6 +147,9 @@ func reorganizeFiles(exploredPathes *[]fs.FilePathInfos) error {
 }
 
 func reorganizeFile(oldPath, newPath string) error {
+	if err := os.MkdirAll(path.Dir(newPath), os.ModePerm); err != nil {
+		return fmt.Errorf("creating folder: %v", err)
+	}
 	if config.Move {
 		if err := os.Rename(oldPath, newPath); err != nil {
 			return fmt.Errorf("moving file: %v", err)
