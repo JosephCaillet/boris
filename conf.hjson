@@ -1,11 +1,30 @@
 {
+	/*
+		This is an exemple of a boris configuration file.
+		Please note that values displayed her are not the default values, if you want to see them use -s boris's flag.
+	*/
+	// Where is your music.
 	musicIn: zikIn
+	// Where your organized music will be.
 	musicOut: zikOut
+	// Where boris will move folder if it cannot guess where to move them.
 	unorganizedFiles: unorganizedFiles,
+	// If true, boris will display a preview of it's actions, without doing them.
 	preview: true
+	// If true, boris will move music files to a new location, if false, it will copy them to a new location.
 	move: false
+	// If true, the musicIn directory will be deleted after the organizing process
 	deleteMusicIn: false
+	// character replacement for [<>:"\/\\|?*]|[\.\ ]+$ (forbiden on windows filesystem)
 	replacement: "_"
+	// This template will be used to compute the new path for each music file, based on it's metadatas/tags.
+	// The templating syntax is based on golang emplate syntax (https://golang.org/pkg/text/template/).
+	// Every tabulation and newline will be removed.
+	// Available function/atribute are:
+	//		Album, Artist, AlbumArtist, Composer,
+	//		Genre, Year, Disk, DiskTotal, Track, TrackTotal,
+	//		Ext (file extension), OriginalFilename (with extension),
+	// 		golang predefined function, such as printf.
 	treeTemplate:
 		'''
 		{{if .Genre}}
@@ -32,7 +51,7 @@
 			{{.Disc | printf "%02d"}}-
 		{{end}}
 		{{if .Track}}
-			{{.Track | printf "%02d"}} {{""}}
+			{{.Track | printf "%02d"}} {{"/*this comment is here only to make the blank space before it easy to notice*/"}}
 		{{end}}
 		{{if .Title}}
 			{{.Title}}{{.Ext}}
