@@ -98,7 +98,7 @@ go install https://github.com/JosephCaillet/boris
 [ 60% ][ 0s ]		♫ EnV - EnV - Streetlights.flac	➜	zikOut/Unknonw genre/EnV/Unknonw album/EnV - Streetlights.flac
 [ 62% ][ 0s ]
 [ 62% ][ 0s ]	↳ zikIn/Brandon - Neon Haze/test3/
-[ 65% ][ 0s ]		⚠ No tagged music file found, moving file(s) below to last computed location.
+[ 65% ][ 0s ]		⚠ No tagged music file found, moving file(s) below to unrecognised music directory.
 [ 65% ][ 0s ]		🖺 test3.txt	➜	unorganizedFiles/Brandon - Neon Haze/test3/test3.txt
 [ 67% ][ 0s ]
 [ 67% ][ 0s ]	↳ zikIn/Moby-Play_2014-HD_Remaster/
@@ -107,7 +107,7 @@ go install https://github.com/JosephCaillet/boris
 [ 75% ][ 0s ]		♫ 01-08-Moby-Natural_Blues_2014_Remastered_Version-SMR.flac	➜	zikOut/Electro/Moby/Play [2014 - HD Remaster]/08 Natural Blues (2014 Remastered Version).flac
 [ 77% ][ 0s ]
 [ 77% ][ 0s ]	↳ zikIn/waw/
-[ 87% ][ 0s ]		⚠ No tagged music file found, moving file(s) below to last computed location.
+[ 87% ][ 0s ]		⚠ No tagged music file found, moving file(s) below to unrecognised music directory.
 [ 87% ][ 0s ]		🖺 1.wav	➜	unorganizedFiles/waw/1.wav
 [ 87% ][ 1s ]		🖺 2.wav	➜	unorganizedFiles/waw/2.wav
 [ 87% ][ 1s ]		🖺 3.wav	➜	unorganizedFiles/waw/3.wav

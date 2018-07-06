@@ -58,5 +58,5 @@ func ErrorTag(err error) {
 
 func WarnWrongMove() {
 	p := warnColor.Sprint(getPrefix())
-	fmt.Printf("%s\t\t⚠ No tagged music file found, moving file(s) below to last computed location.\n", p)
+	fmt.Printf("%s\t\t⚠ No tagged music file found, moving file(s) below to unrecognised music directory.\n", p)
 }
